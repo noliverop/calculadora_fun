@@ -1,20 +1,4 @@
-import * as React from 'react';
-import Paper from '@mui/material/Paper';
-import { styled } from '@mui/material/styles';
-
-
-const BajadaPaper = styled(Paper)(({ theme }) => ({
-  width: 120*5,
-  height: 120,
-  padding: theme.spacing(2),
-  ...theme.typography.a,
-  textAlign: 'justify',
-  backgroundColor: '#0693e3',
-  margin: 'auto',
-  display: 'flex', // Enable Flexbox
-  alignItems: 'center', // Center vertically
-  color: 'hsl(0, 23%, 97%)',
-}));
+import { BajadaPaper } from "./info_assets/paperStyles";
 
 export default function Bajada() {
   return (
