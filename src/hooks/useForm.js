@@ -5,7 +5,8 @@ import { useState, useEffect, useMemo } from 'react';
 export const useForm = ( initialForm = {}, formValidations = {} ) => {
   
     const [ formState, setFormState ] = useState( initialForm );
-    const [ formValidation, setFormValidation ] = useState({})
+    const [ formValidation, setFormValidation ] = useState({});
+    const [touchedFields, setTouchedFields] = useState({});
 
     useEffect(() => {
       createValidators();
@@ -29,8 +30,16 @@ export const useForm = ( initialForm = {}, formValidations = {} ) => {
         });
     }
 
+    const onFieldBlur = (fieldName) => {
+        setTouchedFields({
+          ...touchedFields,
+          [fieldName]: true,
+        });
+      };
+
     const onResetForm = () => {
         setFormState( initialForm );
+        setTouchedFields({});
     }
 
     const createValidators = () => {
@@ -53,8 +62,9 @@ export const useForm = ( initialForm = {}, formValidations = {} ) => {
         formState,
         onInputChange,
         onResetForm,
-
+        onFieldBlur,
         ...formValidation,
         isFormValid,
+        touchedFields,
     }
 }

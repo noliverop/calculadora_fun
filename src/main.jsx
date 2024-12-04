@@ -5,6 +5,7 @@ import App from './App.jsx'
 import Maqueta from './Maqueta.jsx'
 
 createRoot(document.getElementById('root')).render(
+  
   <StrictMode>
     <>
     <Maqueta />

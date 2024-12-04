@@ -25,28 +25,60 @@ import { ResultsPaper } from './info_assets/paperStyles';
 import Grid from '@mui/material/Grid2';
 import { ItemGrid } from './info_assets/paperStyles';
 import Divider from '@mui/material/Divider';
-import Badge from '@mui/material/Badge';
 
 
 export default function FormFun() {
 
-  const { precioBase, precioCaec, precioBA, remImp, edadCot, isapre, onInputChange} = useForm({
-    precioBase: "",
-    precioCaec: "",
-    precioBA: "",
-    remImp:"",
-    edadCot:"",
-    isapre: ""
-  });
+  const isNumber = (value) => !isNaN(value) && value !== "";
+  const isNumberGreaterThan0 = (value) => !isNaN(value) && value !== "" && value > 0;
+  const isNonEmptyString = (value) => typeof value === 'string' && value.trim() !== "";
+
+  const formValidations = {
+    precioBase: [isNumber, "Campo debe ser un número mayor o igual a 0"],
+    precioCaec: [isNumber, "Campo debe ser un número mayor o igual a 0"],
+    precioBA: [isNumber, "Campo debe ser un número mayor o igual a 0"],
+    remImp: [isNumber, "Campo debe ser un número mayor o igual a 0"],
+    edadCot: [isNumberGreaterThan0, "Campo debe ser un número mayor a 0"],
+    isapre: [isNonEmptyString, "Debe seleccionar una isapre"],
+  };  
+
+  const {
+    precioBase,
+    precioCaec,
+    precioBA,
+    remImp,
+    edadCot,
+    isapre,
+    onInputChange,
+    onFieldBlur,
+    formState,
+    isFormValid,
+    precioBaseValid,
+    precioCaecValid,
+    precioBAValid,
+    remImpValid,
+    edadCotValid,
+    isapreValid,
+    touchedFields,
+  } = useForm(
+    {
+      precioBase: "",
+      precioCaec: "",
+      precioBA: "",
+      remImp: "",
+      edadCot: "",
+      isapre: "",
+    },
+    formValidations
+  );
 
   const [disableForm, setDisableForm] = useState(false)
 
-  console.log(precioBase)
-  console.log(precioCaec)
-  console.log(precioBA)
-  console.log(remImp)
-  console.log(edadCot)
-  console.log(isapre)
+  console.log(precioBaseValid)
+  console.log("isformvalid?")
+  console.log(isFormValid)
+  //console.log(formState)
+  
 
 
   const onClickCalcular = (event) => {
@@ -91,10 +123,14 @@ export default function FormFun() {
         id="outlined-adornment-weight"
         endAdornment={<InputAdornment position="end">UF</InputAdornment>}
         aria-describedby="outlined-weight-helper-text"
+        type='number'
+        inputMode="numeric" 
         name='precioBase'
         value={ precioBase }
         onChange={ onInputChange }
         disabled={disableForm}
+        onBlur={() => onFieldBlur("precioBase")}
+        error={touchedFields.precioBase && !!precioBaseValid}
         inputProps={{
           'aria-label': 'weight',
         }}
@@ -106,6 +142,11 @@ export default function FormFun() {
           <InfoIcon />
         </Tooltip>
         </Box>
+        {touchedFields.precioBase && !!precioBaseValid ? 
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+        {precioBaseValid}
+        </Box> : <div></div>
+        }
       </FormHelperText>
     </FormControl>
     <FormControl sx={{ m: 1}} variant="outlined">
@@ -113,10 +154,14 @@ export default function FormFun() {
         id="outlined-adornment-caec"
         endAdornment={<InputAdornment position="end">UF</InputAdornment>}
         aria-describedby="outlined-weight-caec-text"
+        type='number'
+        inputMode="numeric" 
         name='precioCaec'
         value={ precioCaec }
         onChange={ onInputChange }
         disabled={disableForm}
+        onBlur={() => onFieldBlur("precioCaec")}
+        error={touchedFields.precioCaec && !!precioCaecValid}
         inputProps={{
           'aria-label': 'caec',
         }}
@@ -128,6 +173,11 @@ export default function FormFun() {
             <InfoIcon />
           </Tooltip>
         </Box>
+        {touchedFields.precioCaec && !!precioCaecValid ? 
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+        {precioCaecValid}
+        </Box> : <div></div>
+        }
       </FormHelperText>
     </FormControl>
     <FormControl sx={{ m: 1}} variant="outlined">
@@ -135,10 +185,14 @@ export default function FormFun() {
         id="outlined-adornment-weight"
         endAdornment={<InputAdornment position="end">UF</InputAdornment>}
         aria-describedby="outlined-weight-helper-text"
+        type='number'
+        inputMode="numeric" 
         name='precioBA'
         value={ precioBA }
         onChange={ onInputChange }
         disabled={disableForm}
+        onBlur={() => onFieldBlur("precioBA")}
+        error={touchedFields.precioBA && !!precioBAValid}
         inputProps={{
           'aria-label': 'weight',
         }}
@@ -150,17 +204,27 @@ export default function FormFun() {
             <InfoIcon />
           </Tooltip>
         </Box>
+        {touchedFields.precioBA && !!precioBAValid ? 
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+        {precioBAValid}
+        </Box> : <div></div>
+        }
+        
       </FormHelperText>
     </FormControl>
     <FormControl sx={{ m: 1}} variant="outlined">
       <OutlinedInput
         id="outlined-adornment-weight"
-        endAdornment={<InputAdornment position="end">CLP$</InputAdornment>}
+        endAdornment={<InputAdornment position="end">UF</InputAdornment>}
         aria-describedby="outlined-weight-helper-text"
         name='remImp'
+        type='number'
+        inputMode="numeric" 
         value={ remImp }
         onChange={ onInputChange }
         disabled={disableForm}
+        onBlur={() => onFieldBlur("remImp")}
+        error={touchedFields.remImp && !!remImpValid}
         inputProps={{
           'aria-label': 'weight',
         }}
@@ -172,6 +236,11 @@ export default function FormFun() {
             <InfoIcon />
           </Tooltip>
         </Box>
+        {touchedFields.remImp && !!remImpValid ?
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+        {remImpValid}
+        </Box> : <div></div>
+        }
       </FormHelperText>
     </FormControl>
 
@@ -180,27 +249,40 @@ export default function FormFun() {
         id="outlined-adornment-weight"
         endAdornment={<InputAdornment position="end"></InputAdornment>}
         aria-describedby="outlined-weight-helper-text"
+        type='number'
+        inputMode="numeric" 
         name='edadCot'
         value={ edadCot }
         onChange={ onInputChange }
         disabled={disableForm}
+        onBlur={() => onFieldBlur("edadCot")}
+        error={touchedFields.edadCot && !!edadCotValid}
         inputProps={{
           'aria-label': 'weight',
         }}
       />
-      <FormHelperText id="outlined-weight-helper-text">Edad Cotizante</FormHelperText>
+      <FormHelperText id="outlined-weight-helper-text">
+        Edad Cotizante
+        {touchedFields.edadCot && !!edadCotValid ?
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+        {edadCotValid}
+        </Box> : <div></div>
+        }
+        </FormHelperText>
     </FormControl>
-
+    <FormControl sx={{ m: 1, minWidth: 0.42}} variant="outlined">  
     <TextField sx={{ m: 1, minWidth: 0.426}}
           id="outlined-select-currency"
           select
+          type='text'
           label="Isapre"
           defaultValue=""
-          helperText="Elija su Isapre a evaluar"
           name='isapre'
           value={ isapre }
           onChange={ onInputChange }
           disabled={disableForm}
+          onBlur={() => onFieldBlur("isapre")}
+          error={touchedFields.isapre && !!isapreValid}
         >
           {isapres.map((option) => (
             <MenuItem key={option.value} value={option.value}>
@@ -208,6 +290,14 @@ export default function FormFun() {
             </MenuItem>
           ))}
         </TextField>
+        <FormHelperText id="outlined-weight-helper-text">
+        {touchedFields.isapre && !!isapreValid ?
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+        {isapreValid}
+        </Box> : <div></div>
+        }
+        </FormHelperText>
+      </FormControl>  
   </Box>
   <Box
     sx={{
@@ -247,7 +337,7 @@ export default function FormFun() {
             <Typography variant="caption" gutterBottom>
                 Precio Base
               </Typography>
-              <ItemGrid>size=8</ItemGrid>
+              <ItemGrid>{precioBase}</ItemGrid>
             </Box>
           </Grid>
           <Grid size={1}>
@@ -261,7 +351,7 @@ export default function FormFun() {
           <Typography variant="caption" gutterBottom>
                 Factor de Riesgo
               </Typography>
-                  <ItemGrid>Factor de Riesgo</ItemGrid>
+                  <ItemGrid>{edadCot ? factoresCotizante(edadCot): 0}</ItemGrid>
               </Box>
           </Grid>
           <Grid size={1}>
@@ -273,7 +363,7 @@ export default function FormFun() {
           <Grid size={4}>
           <Box sx={{ display: 'flex', flexDirection: 'column', }}>
                   <Box sx={{ height: 24 /* Adjust this to match the label height */ }} />
-                  <ItemGrid>size=8</ItemGrid>
+                  <ItemGrid>{precioBase * (edadCot ? factoresCotizante(edadCot): 0)}</ItemGrid>
               </Box>
           </Grid>
           <Grid size={7}>
@@ -283,7 +373,7 @@ export default function FormFun() {
             <ItemGrid>=</ItemGrid>
           </Grid>
           <Grid size={4}>
-            <ItemGrid>size=8</ItemGrid>
+            <ItemGrid>{isapre ? ges[isapre]: 0}</ItemGrid>
           </Grid>
           <Grid size={7}>
             <ItemGrid>Precio CAEC</ItemGrid>
@@ -292,7 +382,7 @@ export default function FormFun() {
             <ItemGrid>=</ItemGrid>
           </Grid>
           <Grid size={4}>
-            <ItemGrid>size=8</ItemGrid>
+            <ItemGrid>{precioCaec}</ItemGrid>
           </Grid>
           <Grid size={7}>
             <ItemGrid>Precio Beneficios Adicionales</ItemGrid>
@@ -301,7 +391,7 @@ export default function FormFun() {
             <ItemGrid>=</ItemGrid>
           </Grid>
           <Grid size={4}>
-            <ItemGrid>size=8</ItemGrid>
+            <ItemGrid>{precioBA}</ItemGrid>
           </Grid>
           <Grid size={12}>
               <Divider sx={{ borderWidth: 2, borderColor: 'black' }} />
@@ -313,7 +403,8 @@ export default function FormFun() {
             <ItemGrid>=</ItemGrid>
           </Grid>
           <Grid size={4}>
-            <ItemGrid>size=8</ItemGrid>
+            <ItemGrid>{precioBase * (edadCot ? factoresCotizante(edadCot): 0) + 
+              (isapre ? ges[isapre]: 0) + parseFloat(2) + parseFloat(precioBA)}</ItemGrid>
           </Grid>
         </Grid>
       </Box>
