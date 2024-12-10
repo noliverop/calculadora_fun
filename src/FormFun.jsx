@@ -1,11 +1,6 @@
-import Paper from '@mui/material/Paper';
-import { styled } from '@mui/material/styles';
 import { Typography } from '@mui/material';
 import Box from '@mui/material/Box';
-import Input from '@mui/material/Input';
-import FilledInput from '@mui/material/FilledInput';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
@@ -30,14 +25,15 @@ import Divider from '@mui/material/Divider';
 export default function FormFun() {
 
   const isNumber = (value) => !isNaN(value) && value !== "";
+  const isNumberNonNegative = (value) => !isNaN(value) && value !== "" && value >= 0;
   const isNumberGreaterThan0 = (value) => !isNaN(value) && value !== "" && value > 0;
   const isNonEmptyString = (value) => typeof value === 'string' && value.trim() !== "";
 
   const formValidations = {
-    precioBase: [isNumber, "Campo debe ser un número mayor o igual a 0"],
-    precioCaec: [isNumber, "Campo debe ser un número mayor o igual a 0"],
-    precioBA: [isNumber, "Campo debe ser un número mayor o igual a 0"],
-    remImp: [isNumber, "Campo debe ser un número mayor o igual a 0"],
+    precioBase: [isNumberNonNegative, "Campo debe ser un número mayor o igual a 0"],
+    precioCaec: [isNumberNonNegative, "Campo debe ser un número mayor o igual a 0"],
+    precioBA: [isNumberNonNegative, "Campo debe ser un número mayor o igual a 0"],
+    remImp: [isNumberNonNegative, "Campo debe ser un número mayor o igual a 0"],
     edadCot: [isNumberGreaterThan0, "Campo debe ser un número mayor a 0"],
     isapre: [isNonEmptyString, "Debe seleccionar una isapre"],
   };  
@@ -73,6 +69,15 @@ export default function FormFun() {
   );
 
   const [disableForm, setDisableForm] = useState(false)
+  const [showResults, setShowResults] = useState(false)
+
+  const handleShowResults = () => setShowResults(true)
+  const handleNotShowResults = () => setShowResults(false)
+
+  const [PPComplementario, setPPComplementario] = useState(0)
+  const [cotizacion, setCotizacion] = useState(0)
+
+  const [cotLessThanRem, setCotLessThanRem] = useState(false)
 
   console.log(precioBaseValid)
   console.log("isformvalid?")
@@ -84,13 +89,30 @@ export default function FormFun() {
   const onClickCalcular = (event) => {
     event.preventDefault();
     setDisableForm(true)
-    //console.log('desabilitar')
-    console.log(factoresCotizante(edadCot))
+    const newPPComplementario = parseFloat(
+      (parseFloat(precioBase) * (edadCot ? parseFloat(factoresCotizante(edadCot)) : 0)).toFixed(2)
+    );
+    setPPComplementario(newPPComplementario); // Update PPComplementario state
+    
+    const newCotizacion =
+      newPPComplementario +
+      (isapre ? parseFloat(ges[isapre]) : 0) +
+      parseFloat(precioCaec) +
+      parseFloat(precioBA);
+  
+    setCotizacion(parseFloat(newCotizacion.toFixed(2)));
+    
+    setCotLessThanRem(parseFloat(newCotizacion.toFixed(2)) < parseFloat(remImp).toFixed(2))
+    console.log("is cot less than rem")
+    console.log(parseFloat(newCotizacion.toFixed(2)) < parseFloat(remImp).toFixed(2))
+    handleShowResults()
+
   }
 
   const onClickReset = (event) => {
     event.preventDefault();
     setDisableForm(false)
+    handleNotShowResults()
   }
 
   return (
@@ -322,13 +344,13 @@ export default function FormFun() {
   </Box>
 
   <Stack direction="row" spacing={2}>
-      <Button variant="contained" disabled={disableForm} onClick={onClickCalcular}>Calcular</Button>
+      <Button variant="contained" disabled={!isFormValid || disableForm} onClick={onClickCalcular}>Calcular</Button>
       <Button variant="contained" disabled={!disableForm} onClick={onClickReset}>
         Resetear
       </Button>
   </Stack>  
 
-
+  {showResults ?   
   <ResultsPaper variant="elevation">
     <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={2}>
@@ -363,7 +385,7 @@ export default function FormFun() {
           <Grid size={4}>
           <Box sx={{ display: 'flex', flexDirection: 'column', }}>
                   <Box sx={{ height: 24 /* Adjust this to match the label height */ }} />
-                  <ItemGrid>{precioBase * (edadCot ? factoresCotizante(edadCot): 0)}</ItemGrid>
+                  <ItemGrid>{PPComplementario}</ItemGrid>
               </Box>
           </Grid>
           <Grid size={7}>
@@ -403,12 +425,41 @@ export default function FormFun() {
             <ItemGrid>=</ItemGrid>
           </Grid>
           <Grid size={4}>
-            <ItemGrid>{precioBase * (edadCot ? factoresCotizante(edadCot): 0) + 
-              (isapre ? ges[isapre]: 0) + parseFloat(2) + parseFloat(precioBA)}</ItemGrid>
+            <ItemGrid>{cotizacion}</ItemGrid>
           </Grid>
         </Grid>
+        {cotLessThanRem ? 
+        <Typography
+        variant="body1" gutterBottom color="#0064AC" align='justify'
+        sx={{ marginTop: 3, color: 'black' }}
+        >
+        La cotización estimada a pagar, dados los antecedentes provistos es de {cotizacion} UF pero debido
+        a que tu remuneración imponible aproximada es mayor, tu cotización a pagar
+        será tu remuneración imponible de {remImp} UF. 
+        </Typography> :
+        <Typography
+        variant="body1" gutterBottom color="#0064AC" align='justify'
+        sx={{ marginTop: 3, color: 'black' }}
+        >
+        La cotización estimada a pagar dados los antecedentes provistos es de {cotizacion} UF. 
+        </Typography> 
+
+        }
+        <Typography
+          variant="body1" gutterBottom color="#0064AC" align='justify'
+          sx={{ marginTop: 3, color: 'black' }}
+        >
+        <ui>
+          <li>Tu precio base de {} significa a ...</li>
+          <li>Tu factor de riesgo de {} está asociado a ...</li>
+          <li>Tu precio GES de {} está asociado a ...</li>
+          <li>Tu precio CAEC de {} está asociado a ...</li>
+          <li>Tu precio de beneficios adicionales de {} está asociado a ...</li>
+        </ui>
+        </Typography>
       </Box>
-  </ResultsPaper>    
+  </ResultsPaper>
+  : <div></div>  }
 
   </> 
   );
