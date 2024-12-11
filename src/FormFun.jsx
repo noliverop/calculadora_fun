@@ -79,21 +79,78 @@ export default function FormFun() {
 
   const [cotLessThanRem, setCotLessThanRem] = useState(false)
 
-  console.log(precioBaseValid)
-  console.log("isformvalid?")
-  console.log(isFormValid)
+  const [numeroDeCargas, setNumeroDeCargas] = useState(0); // Track "Número de Cargas"
+  const [edadCargas, setEdadCargas] = useState([]);
+  const [sumFactoresCargas, setSumFactoresCargas] = useState(0);
+
+  //console.log(precioBaseValid)
+  //console.log("isformvalid?")
+  //console.log(isFormValid)
   //console.log(formState)
-  
+
+  const handleNumeroDeCargasChange = (e) => {
+    const value = parseInt(e.target.value, 10) || 0;
+    setNumeroDeCargas(value);
+
+    // Adjust edadCargas and errors state to match the number of fields
+    setEdadCargas((prev) => {
+      const newCargas = [...prev];
+      if (value > newCargas.length) {
+        // Add new fields with default value
+        return [...newCargas, ...Array(value - newCargas.length).fill('')];
+      } else {
+        // Remove extra fields
+        return newCargas.slice(0, value);
+      }
+    });
+  }
+
+  const handleEdadCargaChange = (index, value) => {
+    const numValue = parseInt(value, 10);
+
+    // Update the value
+    setEdadCargas((prev) => {
+      const updatedCargas = [...prev];
+      updatedCargas[index] = value;
+      return updatedCargas;
+    });
+
+  };
+
+
+  console.log("n cargas")
+  console.log(numeroDeCargas)
+  console.log("edades cargas")
+  console.log(edadCargas)
+  console.log("suma factores cargas")
+  console.log(sumFactoresCargas)
+
 
 
   const onClickCalcular = (event) => {
     event.preventDefault();
     setDisableForm(true)
-    const newPPComplementario = parseFloat(
-      (parseFloat(precioBase) * (edadCot ? parseFloat(factoresCotizante(edadCot)) : 0)).toFixed(2)
-    );
-    setPPComplementario(newPPComplementario); // Update PPComplementario state
+
+      const factores = edadCargas.map(age => {
+        const parsedAge = parseInt(age, 10);
+        return isNaN(parsedAge) ? 0 : factoresCarga(parsedAge);
+      });
+      const sum_cargas = parseFloat(
+        factores
+          .filter(num => !isNaN(num)) // Ensure only valid numbers are summed
+          .reduce((total, num) => total + parseFloat(num), 0)
+          .toFixed(2)
+      );
+      
+      setSumFactoresCargas(sum_cargas)
+
+      const newPPComplementario = parseFloat(
+        (parseFloat(precioBase) * (edadCot ? parseFloat(factoresCotizante(edadCot)) : 0) + sum_cargas).toFixed(2)
+      );
+      setPPComplementario(newPPComplementario); // Update PPComplementario state
     
+     
+
     const newCotizacion =
       newPPComplementario +
       (isapre ? parseFloat(ges[isapre]) : 0) +
@@ -101,10 +158,9 @@ export default function FormFun() {
       parseFloat(precioBA);
   
     setCotizacion(parseFloat(newCotizacion.toFixed(2)));
-    
     setCotLessThanRem(parseFloat(newCotizacion.toFixed(2)) < parseFloat(remImp).toFixed(2))
-    console.log("is cot less than rem")
-    console.log(parseFloat(newCotizacion.toFixed(2)) < parseFloat(remImp).toFixed(2))
+
+ 
     handleShowResults()
 
   }
@@ -336,13 +392,48 @@ export default function FormFun() {
         id="outlined-adornment-weight"
         aria-describedby="outlined-weight-helper-text"
         defaultValue={0}
-        placeholder={0}
         disabled={disableForm}
+        value={numeroDeCargas}
+        onChange={handleNumeroDeCargasChange}
       />
       <FormHelperText id="outlined-weight-helper-text">Número de Cargas</FormHelperText>
     </FormControl>
   </Box>
-
+  <Box
+    sx={{
+        display: 'flex',
+        flexWrap: 'wrap', // Prevent wrapping
+        justifyContent: 'space-between', // Adjust spacing between items
+        alignItems: 'center', // Align items vertically in the center
+        gap: 2, // Optional: Adds consistent spacing between items
+        mt: 2, // Top margin
+    }}
+   > 
+    {Array.from({ length: numeroDeCargas }).map((_, index) => (   
+    <FormControl sx={{ m: 1, minWidth: 0.42}} variant="outlined" key={`edadCarga-${index}`}>
+      <OutlinedInput
+        id={`outlined-adornment-weight-edadCarga-${index}`}
+        key={`edadCarga-${index}`}
+        endAdornment={<InputAdornment position="end"></InputAdornment>}
+        aria-describedby="outlined-weight-helper-text"
+        type='number'
+        inputMode="numeric" 
+        name={`edadCarga-${index}`}
+        value={edadCargas[index] || ''}
+        onChange={(e) => handleEdadCargaChange(index, e.target.value)}
+        disabled={disableForm}
+        //onBlur={() => onFieldBlur("edadCot")}
+        //error={touchedFields.edadCot && !!edadCotValid}
+        inputProps={{
+          'aria-label': 'weight',
+        }}
+      />
+      <FormHelperText id={`outlined-weight-helper-text-edadCarga-${index}`}>
+        Edad Cotizante {index + 1}
+        </FormHelperText>
+    </FormControl>
+    ))}
+  </Box>  
   <Stack direction="row" spacing={2}>
       <Button variant="contained" disabled={!isFormValid || disableForm} onClick={onClickCalcular}>Calcular</Button>
       <Button variant="contained" disabled={!disableForm} onClick={onClickReset}>
@@ -373,7 +464,7 @@ export default function FormFun() {
           <Typography variant="caption" gutterBottom>
                 Factor de Riesgo
               </Typography>
-                  <ItemGrid>{edadCot ? factoresCotizante(edadCot): 0}</ItemGrid>
+                  <ItemGrid>{((edadCot ? parseFloat(factoresCotizante(edadCot)): 0) + sumFactoresCargas).toFixed(2)}</ItemGrid>
               </Box>
           </Grid>
           <Grid size={1}>

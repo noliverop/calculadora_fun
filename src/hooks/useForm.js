@@ -28,6 +28,7 @@ export const useForm = ( initialForm = {}, formValidations = {} ) => {
             ...formState,
             [ name ]: value
         });
+        //setTouchedFields({ ...touchedFields, [name]: true });
     }
 
     const onFieldBlur = (fieldName) => {

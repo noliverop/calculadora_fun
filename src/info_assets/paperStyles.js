@@ -3,7 +3,7 @@ import { styled } from '@mui/material/styles';
 
 export const BackPaper = styled(Paper)(({ theme }) => ({
     width: 120*6,
-    height: 120*15,
+    height: 120*18,
     padding: theme.spacing(2),
     ...theme.typography.body2,
     textAlign: 'center',
@@ -38,7 +38,7 @@ export const BajadaPaper = styled(Paper)(({ theme }) => ({
 
 export const ResultsPaper = styled(Paper)(({ theme }) => ({
     width: 120*5,
-    height: 120*4,
+    height: 120*4.5,
     padding: theme.spacing(2),
     ...theme.typography.a,
     textAlign: 'justify',

@@ -1,3 +1,4 @@
+
 export const ExplicacionPB = `
 Es el precio asignado por la Isapre a cada plan de salud complementario.
 `;
