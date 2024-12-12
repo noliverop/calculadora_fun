@@ -158,9 +158,10 @@ export default function FormFun() {
       parseFloat(precioBA);
   
     setCotizacion(parseFloat(newCotizacion.toFixed(2)));
-    setCotLessThanRem(parseFloat(newCotizacion.toFixed(2)) < parseFloat(remImp).toFixed(2))
-
- 
+    setCotLessThanRem(parseFloat(newCotizacion.toFixed(2)) < (parseFloat(remImp)*0.07).toFixed(2))
+    console.log("cot imponible")
+    console.log((parseFloat(remImp)*0.07).toFixed(2))
+    
     handleShowResults()
 
   }
@@ -525,8 +526,8 @@ export default function FormFun() {
         sx={{ marginTop: 3, color: 'black' }}
         >
         La cotización estimada a pagar, dados los antecedentes provistos es de {cotizacion} UF pero debido
-        a que tu remuneración imponible aproximada es mayor, tu cotización a pagar
-        será tu remuneración imponible de {remImp} UF. 
+        a que tu cotización imponible aproximada es mayor, tu cotización a pagar
+        será tu remuneración imponible de {(parseFloat(remImp)*0.07).toFixed(2)} UF. 
         </Typography> :
         <Typography
         variant="body1" gutterBottom color="#0064AC" align='justify'
