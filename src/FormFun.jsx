@@ -145,7 +145,7 @@ export default function FormFun() {
       setSumFactoresCargas(sum_cargas)
 
       const newPPComplementario = parseFloat(
-        (parseFloat(precioBase) * (edadCot ? parseFloat(factoresCotizante(edadCot)) : 0) + sum_cargas).toFixed(2)
+        (parseFloat(precioBase) * ((edadCot ? parseFloat(factoresCotizante(edadCot)) : 0) + sum_cargas)).toFixed(2)
       );
       setPPComplementario(newPPComplementario); // Update PPComplementario state
     
