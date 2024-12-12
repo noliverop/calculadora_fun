@@ -528,7 +528,7 @@ export default function FormFun() {
         >
         La cotización estimada a pagar, dados los antecedentes provistos es de {cotizacion} UF pero debido
         a que tu cotización imponible aproximada es mayor, tu cotización a pagar
-        será tu remuneración imponible de {(parseFloat(remImp)*0.07).toFixed(2)} UF. 
+        será tu cotización imponible de {(parseFloat(remImp)*0.07).toFixed(2)} UF. 
         </Typography> :
         <Typography
         variant="body1" gutterBottom color="#0064AC" align='justify'
