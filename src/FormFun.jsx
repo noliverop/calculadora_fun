@@ -124,6 +124,8 @@ export default function FormFun() {
   console.log(edadCargas)
   console.log("suma factores cargas")
   console.log(sumFactoresCargas)
+  console.log("cot imponible")
+  console.log((parseFloat(remImp)*0.07).toFixed(2))
 
 
 
@@ -159,8 +161,7 @@ export default function FormFun() {
   
     setCotizacion(parseFloat(newCotizacion.toFixed(2)));
     setCotLessThanRem(parseFloat(newCotizacion.toFixed(2)) < (parseFloat(remImp)*0.07).toFixed(2))
-    console.log("cot imponible")
-    console.log((parseFloat(remImp)*0.07).toFixed(2))
+
     
     handleShowResults()
 
