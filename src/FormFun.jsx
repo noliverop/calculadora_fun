@@ -183,10 +183,15 @@ export default function FormFun() {
   <Box
     sx={{
         display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
+        gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, // Responsive columns
         gap: 2,
         mt: 2,
         mb: 2,
+        width: '95%',
+        overflowX: 'hidden', // Prevent horizontal overflow
+        overflowY: 'visible', // Prevent vertical overflow
+        pr: { xs: 3, sm: 4, md: 6 }, // Increased right padding for form
+        mr: { xs: 2, sm: 3, md: 4 }, // Added right margin for extra spacing
     }}
     >
     {/* Row 1 - Toggles */}
@@ -392,6 +397,11 @@ export default function FormFun() {
           gap: 2,
           mt: 2,
           mb: 2,
+          width: '90%',
+          overflowX: 'hidden', // Prevent horizontal overflow
+          overflowY: 'visible', // Prevent vertical overflow
+          pr: { xs: 3, sm: 4, md: 6 }, // Increased right padding for dependent fields
+          mr: { xs: 2, sm: 3, md: 4 }, // Added right margin for extra spacing
       }}
      > 
       {Array.from({ length: numeroDeCargas }).map((_, index) => (   
@@ -419,7 +429,7 @@ export default function FormFun() {
   )}
 
   {/* Action Buttons */}
-  <Box sx={{ mt: 3, mb: 2 }}>
+  <Box sx={{ mt: 3, mb: 2, pr: { xs: 3, sm: 4, md: 6 }, mr: { xs: 2, sm: 3, md: 4 } }}>
     <Stack direction="row" spacing={2}>
       <Button variant="contained" disabled={!isFormValid || disableForm} onClick={onClickCalcular}>
         Calcular
@@ -430,94 +440,118 @@ export default function FormFun() {
     </Stack>
   </Box>
 
+  {/* Results Paper */}
   {showResults ?   
+<Box sx={{ 
+  width: '100%',
+  pr: { xs: 4, sm: 5, md: 6 }, // Reduced right padding
+  pl: { xs: 2, sm: 3, md: 4 }, // Reduced left padding for balance
+  mr: { xs: 1, sm: 2, md: 3 }, // Added right margin
+  ml: { xs: 1, sm: 2, md: 3 }, // Added left margin for balance
+}}>
   <ResultsPaper variant="elevation">
-    <Box sx={{ flexGrow: 1 }}>
-        <Grid container spacing={2}>
-          <Grid size={3}>
-            <Box sx={{ display: 'flex', flexDirection: 'column',}}>
+    <Box sx={{ flexGrow: 1, width: '100%', overflowX: 'hidden' }}>
+      <Grid container spacing={2} sx={{ width: '100%' }}>
+        <Grid size={{ xs: 12, sm: 3 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
             <Typography variant="caption" gutterBottom>
-                Precio Base
-              </Typography>
-              <ItemGrid>{parseFloat(icsa2025 ? (icsa2025montos[isapre]+1)*precioBase : precioBase).toFixed(2)}</ItemGrid>
-            </Box>
-          </Grid>
-          <Grid size={1}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', }}>
-                  <Box sx={{ height: 24 /* Adjust this to match the label height */ }} />
-                  <ItemGrid>x</ItemGrid>
-              </Box>
-          </Grid>
-          <Grid size={3}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', }}>
-          <Typography variant="caption" gutterBottom>
-                Factor de Riesgo
-              </Typography>
-                  <ItemGrid>{((edadCot ? parseFloat(factoresCotizante(edadCot)): 0) + sumFactoresCargas).toFixed(2)}</ItemGrid>
-              </Box>
-          </Grid>
-          <Grid size={1}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', }}>
-                  <Box sx={{ height: 24 /* Adjust this to match the label height */ }} />
-                  <ItemGrid>=</ItemGrid>
-              </Box>
-          </Grid>
-          <Grid size={4}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', }}>
-                  <Box sx={{ height: 24 /* Adjust this to match the label height */ }} />
-                  <ItemGrid>{PPComplementario.toFixed(2)}</ItemGrid>
-              </Box>
-          </Grid>
-          <Grid size={7}>
-            <ItemGrid>Precio GES</ItemGrid>
-          </Grid>
-          <Grid size={1}>
-            <ItemGrid>=</ItemGrid>
-          </Grid>
-          <Grid size={4}>
-            <ItemGrid>{(ges2025 ? (isapre ? ges2025monto[isapre]: 0) * (1 + numeroDeCargas) : (isapre ? ges[isapre]: 0) * (1 + numeroDeCargas)).toFixed(2)}</ItemGrid>
-          </Grid>
-          <Grid size={7}>
-            <ItemGrid>Precio CAEC</ItemGrid>
-          </Grid>
-          <Grid size={1}>
-            <ItemGrid>=</ItemGrid>
-          </Grid>
-          <Grid size={4}>
-            <ItemGrid>{parseFloat(precioCaec).toFixed(2)}</ItemGrid>
-          </Grid>
-          <Grid size={7}>
-            <ItemGrid>Precio Beneficios Adicionales</ItemGrid>
-          </Grid>
-          <Grid size={1}>
-            <ItemGrid>=</ItemGrid>
-          </Grid>
-          <Grid size={4}>
-            <ItemGrid>{parseFloat(precioBA).toFixed(2)}</ItemGrid>
-          </Grid>
-          <Grid size={12}>
-              <Divider sx={{ borderWidth: 2, borderColor: 'black' }} />
-          </Grid>
-          <Grid size={7}>
-            <ItemGrid>Cotización estimada</ItemGrid>
-          </Grid>
-          <Grid size={1}>
-            <ItemGrid>=</ItemGrid>
-          </Grid>
-          <Grid size={4}>
-            <ItemGrid>{cotizacion.toFixed(2)}</ItemGrid>
-          </Grid>
+              Precio Base
+            </Typography>
+            <ItemGrid>{parseFloat(icsa2025 ? (icsa2025montos[isapre]+1)*precioBase : precioBase).toFixed(2)}</ItemGrid>
+          </Box>
         </Grid>
-        <Typography
-        variant="body1" gutterBottom color="#0064AC" align='justify'
-        sx={{ marginTop: 3, color: 'black' }}
-        >
-        La cotización estimada a pagar dados los antecedentes provistos es de {cotizacion.toFixed(2)} UF. 
-        </Typography>
-        <Typography
-          variant="body1" gutterBottom color="#0064AC" align='justify'
-          sx={{ marginTop: 3, color: 'black' }}
-        >
+        <Grid size={{ xs: 12, sm: 1 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+            <Box sx={{ height: 24 }} />
+            <ItemGrid>x</ItemGrid>
+          </Box>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 3 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+            <Typography variant="caption" gutterBottom>
+              Factor de Riesgo
+            </Typography>
+            <ItemGrid>{((edadCot ? parseFloat(factoresCotizante(edadCot)): 0) + sumFactoresCargas).toFixed(2)}</ItemGrid>
+          </Box>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 1 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+            <Box sx={{ height: 24 }} />
+            <ItemGrid>=</ItemGrid>
+          </Box>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 4 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+            <Box sx={{ height: 24 }} />
+            <ItemGrid>{PPComplementario.toFixed(2)}</ItemGrid>
+          </Box>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 7 }}>
+          <ItemGrid>Precio GES</ItemGrid>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 1 }}>
+          <ItemGrid>=</ItemGrid>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 4 }}>
+          <ItemGrid>{(ges2025 ? (isapre ? ges2025monto[isapre]: 0) * (1 + numeroDeCargas) : (isapre ? ges[isapre]: 0) * (1 + numeroDeCargas)).toFixed(2)}</ItemGrid>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 7 }}>
+          <ItemGrid>Precio CAEC</ItemGrid>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 1 }}>
+          <ItemGrid>=</ItemGrid>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 4 }}>
+          <ItemGrid>{parseFloat(precioCaec).toFixed(2)}</ItemGrid>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 7 }}>
+          <ItemGrid>Precio Beneficios Adicionales</ItemGrid>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 1 }}>
+          <ItemGrid>=</ItemGrid>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 4 }}>
+          <ItemGrid>{parseFloat(precioBA).toFixed(2)}</ItemGrid>
+        </Grid>
+        <Grid size={12}>
+          <Divider sx={{ borderWidth: 2, borderColor: 'black' }} />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 7 }}>
+          <ItemGrid>Cotización estimada</ItemGrid>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 1 }}>
+          <ItemGrid>=</ItemGrid>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 4 }}>
+          <ItemGrid>{cotizacion.toFixed(2)}</ItemGrid>
+        </Grid>
+      </Grid>
+      <Typography
+        variant="body1" 
+        gutterBottom 
+        color="#0064AC" 
+        align='justify'
+        sx={{ 
+          marginTop: 3, 
+          color: 'black',
+          wordBreak: 'break-word', // Prevent text overflow
+          overflowWrap: 'break-word', // Additional text wrapping
+        }}
+      >
+        La cotización estimada a pagar dados los antecedentes provistos es de <b>{cotizacion.toFixed(2)} UF.</b> 
+      </Typography>
+      <Typography
+        variant="body1" 
+        gutterBottom 
+        color="#0064AC" 
+        align='justify'
+        sx={{ 
+          marginTop: 3, 
+          color: 'black',
+          wordBreak: 'break-word', // Prevent text overflow
+          overflowWrap: 'break-word', // Additional text wrapping
+        }}
+      >
         <Box component="ul" sx={{ 
           pl: 3, 
           m: 0,
@@ -525,108 +559,113 @@ export default function FormFun() {
             mb: 1,
             fontSize: '1rem',
             lineHeight: 1.6,
+            wordBreak: 'break-word', // Prevent text overflow in list items
+            overflowWrap: 'break-word', // Additional text wrapping
           }
         }}>
-          <li>{icsa2025 ? `Tu precio base del plan aplicando ICSA 2025 es de ${parseFloat(precioBase*(1+icsa2025montos[isapre])).toFixed(2)} UF.` : `Tu precio base del plan sin aplicar ICSA 2025 es de ${parseFloat(precioBase).toFixed(2)} UF.`}</li>
-          <li>Tu factor de riesgo familiar de {((edadCot ? parseFloat(factoresCotizante(edadCot)): 0) + sumFactoresCargas).toFixed(2)} está asociado a la edad del cotizante y sus cargas familiares. Estos factores los puedes ver en las siguientes tablas:
-            <Box sx={{ mt: 2, display: 'flex', gap: 3, flexWrap: 'wrap', justifyContent: 'center' }}>
-              {/* Cotizante Factors Table */}
-              <Box sx={{ minWidth: 200 }}>
-                <Typography variant="h6" sx={{ mb: 2, textAlign: 'center', fontWeight: 'bold' }}>
-                  Factores Cotizante
-                </Typography>
-                <Box sx={{ 
-                  border: '1px solid #ccc', 
-                  borderRadius: 1,
-                  overflow: 'hidden'
-                }}>
+            <li>{icsa2025 ? 
+    <>Tu precio base del plan aplicando ICSA 2025 es de <b>{parseFloat(precioBase*(1+icsa2025montos[isapre])).toFixed(2)} UF.</b></> : 
+    <>Tu precio base del plan sin aplicar ICSA 2025 es de <b>{parseFloat(precioBase).toFixed(2)} UF. </b></>}
+    </li>
+            <li>Tu factor de riesgo familiar de <b>{((edadCot ? parseFloat(factoresCotizante(edadCot)): 0) + sumFactoresCargas).toFixed(2)}</b> está asociado a la edad del cotizante y sus cargas familiares. Estos factores los puedes ver en las siguientes tablas:
+              <Box sx={{ mt: 2, display: 'flex', gap: 3, flexWrap: 'wrap', justifyContent: 'center' }}>
+                {/* Cotizante Factors Table */}
+                <Box sx={{ minWidth: 200 }}>
+                  <Typography variant="h6" sx={{ mb: 2, textAlign: 'center', fontWeight: 'bold' }}>
+                    Factores Cotizante
+                  </Typography>
                   <Box sx={{ 
-                    display: 'grid', 
-                    gridTemplateColumns: '1fr 1fr',
-                    '& > div': {
-                      p: 1,
-                      borderBottom: '1px solid #ccc',
-                      borderRight: '1px solid #ccc',
-                      fontSize: '0.875rem',
-                      backgroundColor: '#fff',
-                      fontWeight: 'bold'
-                    }
+                    border: '1px solid #ccc', 
+                    borderRadius: 1,
                   }}>
-                    <Box>Edad</Box>
-                    <Box>Factor</Box>
-                    <Box>&lt; 20</Box>
-                    <Box>0.6</Box>
-                    <Box>20-24</Box>
-                    <Box>0.9</Box>
-                    <Box>25-34</Box>
-                    <Box>1.0</Box>
-                    <Box>35-44</Box>
-                    <Box>1.3</Box>
-                    <Box>45-54</Box>
-                    <Box>1.4</Box>
-                    <Box>55-64</Box>
-                    <Box>2.0</Box>
-                    <Box>65+</Box>
-                    <Box>2.4</Box>
+                    <Box sx={{ 
+                      display: 'grid', 
+                      gridTemplateColumns: '1fr 1fr',
+                      '& > div': {
+                        p: 1,
+                        borderBottom: '1px solid #ccc',
+                        borderRight: '1px solid #ccc',
+                        fontSize: '0.875rem',
+                        backgroundColor: '#fff',
+                        fontWeight: 'bold'
+                      }
+                    }}>
+                      <Box>Edad</Box>
+                      <Box>Factor</Box>
+                      <Box>&lt; 20</Box>
+                      <Box>0.6</Box>
+                      <Box>20-24</Box>
+                      <Box>0.9</Box>
+                      <Box>25-34</Box>
+                      <Box>1.0</Box>
+                      <Box>35-44</Box>
+                      <Box>1.3</Box>
+                      <Box>45-54</Box>
+                      <Box>1.4</Box>
+                      <Box>55-64</Box>
+                      <Box>2.0</Box>
+                      <Box>65+</Box>
+                      <Box>2.4</Box>
+                    </Box>
                   </Box>
                 </Box>
-              </Box>
 
-              {/* Carga Factors Table */}
-              <Box sx={{ minWidth: 200 }}>
-                <Typography variant="h6" sx={{ mb: 2, textAlign: 'center', fontWeight: 'bold' }}>
-                  Factores Carga
-                </Typography>
-                <Box sx={{ 
-                  border: '1px solid #ccc', 
-                  borderRadius: 1,
-                  overflow: 'hidden'
-                }}>
+                {/* Carga Factors Table */}
+                <Box sx={{ minWidth: 200 }}>
+                  <Typography variant="h6" sx={{ mb: 2, textAlign: 'center', fontWeight: 'bold' }}>
+                    Factores Carga
+                  </Typography>
                   <Box sx={{ 
-                    display: 'grid', 
-                    gridTemplateColumns: '1fr 1fr',
-                    '& > div': {
-                      p: 1,
-                      borderBottom: '1px solid #ccc',
-                      borderRight: '1px solid #ccc',
-                      fontSize: '0.875rem',
-                      backgroundColor: '#fff',
-                      fontWeight: 'bold'
-                    }
+                    border: '1px solid #ccc', 
+                    borderRadius: 1
                   }}>
-                    <Box>Edad</Box>
-                    <Box>Factor</Box>
-                    <Box>&lt; 2</Box>
-                    <Box>0.0</Box>
-                    <Box>2-19</Box>
-                    <Box>0.6</Box>
-                    <Box>20-24</Box>
-                    <Box>0.7</Box>
-                    <Box>25-34</Box>
-                    <Box>0.7</Box>
-                    <Box>35-44</Box>
-                    <Box>0.9</Box>
-                    <Box>45-54</Box>
-                    <Box>1.0</Box>
-                    <Box>55-64</Box>
-                    <Box>1.4</Box>
-                    <Box>65+</Box>
-                    <Box>2.2</Box>
+                    <Box sx={{ 
+                      display: 'grid', 
+                      gridTemplateColumns: '1fr 1fr',
+                      '& > div': {
+                        p: 1,
+                        borderBottom: '1px solid #ccc',
+                        borderRight: '1px solid #ccc',
+                        fontSize: '0.875rem',
+                        backgroundColor: '#fff',
+                        fontWeight: 'bold'
+                      }
+                    }}>
+                      <Box>Edad</Box>
+                      <Box>Factor</Box>
+                      <Box>&lt; 2</Box>
+                      <Box>0.0</Box>
+                      <Box>2-19</Box>
+                      <Box>0.6</Box>
+                      <Box>20-24</Box>
+                      <Box>0.7</Box>
+                      <Box>25-34</Box>
+                      <Box>0.7</Box>
+                      <Box>35-44</Box>
+                      <Box>0.9</Box>
+                      <Box>45-54</Box>
+                      <Box>1.0</Box>
+                      <Box>55-64</Box>
+                      <Box>1.4</Box>
+                      <Box>65+</Box>
+                      <Box>2.2</Box>
+                    </Box>
                   </Box>
                 </Box>
               </Box>
-            </Box>
-          </li>
-          <li>{ges2025 ? 
-  `El precio GES 2025 de la isapre ${isapre} corresponde a ${isapre ? ges2025monto[isapre]: 0} UF. Este valor debe multiplicarse por la cantidad de beneficiarios del plan, en este caso, ${1 + numeroDeCargas} ${numeroDeCargas === 0 ? 'beneficiario' : 'beneficiarios'}. Por lo tanto el precio GES para este plan es: ${((isapre ? ges2025monto[isapre]: 0) * (1 + numeroDeCargas)).toFixed(2)}` : 
-  `El precio GES de la isapre ${isapre} corresponde a ${isapre ? ges[isapre]: 0} UF. Este valor debe multiplicarse por la cantidad de beneficiarios del plan, en este caso, ${1 + numeroDeCargas} ${numeroDeCargas === 0 ? 'beneficiario' : 'beneficiarios'}. Por lo tanto el precio GES para este plan es: ${((isapre ? ges[isapre]: 0) * (1 + numeroDeCargas)).toFixed(2)}`
-}</li>
-          <li>Tu precio CAEC de {parseFloat(precioCaec).toFixed(2)} UF está asociado a la Cobertura Adicional para Enfermedades Catastróficas.</li>
-          <li>Tu precio de beneficios adicionales de {parseFloat(precioBA).toFixed(2)} UF está asociado a los beneficios extra contratados.</li>
-        </Box>
+            </li>
+            <li>{ges2025 ? 
+    <>El precio GES 2025 de la isapre {isapre} corresponde a {isapre ? ges2025monto[isapre]: 0} UF. Este valor debe multiplicarse por la cantidad de beneficiarios del plan, en este caso, {1 + numeroDeCargas} {numeroDeCargas === 0 ? 'beneficiario' : 'beneficiarios'}. Por lo tanto el precio GES para este plan es: <b>{((isapre ? ges2025monto[isapre]: 0) * (1 + numeroDeCargas)).toFixed(2)} UF.</b></> : 
+    <>El precio GES de la isapre {isapre} corresponde a {isapre ? ges[isapre]: 0} UF. Este valor debe multiplicarse por la cantidad de beneficiarios del plan, en este caso, {1 + numeroDeCargas} {numeroDeCargas === 0 ? 'beneficiario' : 'beneficiarios'}. Por lo tanto el precio GES para este plan es: <b>{((isapre ? ges[isapre]: 0) * (1 + numeroDeCargas)).toFixed(2)} UF.</b></>
+  }</li>
+            <li>Tu precio CAEC de <b>{parseFloat(precioCaec).toFixed(2)}</b> UF está asociado a la Cobertura Adicional para Enfermedades Catastróficas.</li>
+            <li>Tu precio de beneficios adicionales corresponde a  <b>{parseFloat(precioBA).toFixed(2)}</b> UF.</li>
+            <li><b>Recordar que desde la implementación de la ley 21.674 los cotizantes de isapres no pueden tener un plan con un valor menor a su tope de 7% legal.</b></li>
+          </Box>
         </Typography>
       </Box>
-  </ResultsPaper>
+    </ResultsPaper>
+</Box>
   : <div></div>  }
 
   </> 

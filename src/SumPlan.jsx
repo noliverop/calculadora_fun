@@ -6,11 +6,13 @@ const SumPlan = () => {
   return (
     <Box
       sx={{
-        width: '100%',
-        maxWidth: '1186px',
+        width: '90%',
+        maxWidth: '1000px',
         mx: 'auto',
         my: 4,
-        px: 3,
+        px: { xs: 2, sm: 3, md: 4 },
+        pr: { xs: 3, sm: 4, md: 6 },
+        border: '2px solid #e0e0e0', // Added border
       }}
     >
       <Grid container spacing={4} alignItems="center">
@@ -27,36 +29,21 @@ const SumPlan = () => {
             {/* Precio Plan Complementario */}
             <Box sx={{ width: '100%' }}>
               <Typography
-                variant="h6"
+                variant="body2"
                 sx={{
-                  fontWeight: 'bold',
-                  color: 'black',
-                  fontSize: { xs: '16px', sm: '18px', md: '20px' },
+                  color: '#666',
+                  fontSize: '1rem',
                   mb: 0.5,
                 }}
               >
                 Precio Plan Complementario
               </Typography>
               <Typography
-                variant="body2"
-                sx={{
-                  fontStyle: 'italic',
-                  color: '#666',
-                  fontSize: { xs: '12px', sm: '14px', md: '16px' },
-                }}
-              >
-                (Precio Base Plan multiplicado por Factor Grupo Familiar)
-              </Typography>
-            </Box>
-
-            {/* Plus Sign */}
-            <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', my: 1 }}>
-              <Typography
-                variant="h4"
+                variant="h6"
                 sx={{
                   fontWeight: 'bold',
-                  color: 'black',
-                  fontSize: { xs: '24px', sm: '28px', md: '32px' },
+                  color: '#333',
+                  fontSize: '1rem',
                 }}
               >
                 +
@@ -66,25 +53,21 @@ const SumPlan = () => {
             {/* Precio GES */}
             <Box sx={{ width: '100%' }}>
               <Typography
-                variant="h6"
+                variant="body2"
                 sx={{
-                  fontWeight: 'bold',
-                  color: 'black',
-                  fontSize: { xs: '16px', sm: '18px', md: '20px' },
+                  color: '#666',
+                  fontSize: '1rem',
+                  mb: 0.5,
                 }}
               >
                 Precio GES
               </Typography>
-            </Box>
-
-            {/* Plus Sign */}
-            <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', my: 1 }}>
               <Typography
-                variant="h4"
+                variant="h6"
                 sx={{
                   fontWeight: 'bold',
-                  color: 'black',
-                  fontSize: { xs: '24px', sm: '28px', md: '32px' },
+                  color: '#333',
+                  fontSize: '1.25rem',
                 }}
               >
                 +
@@ -94,99 +77,77 @@ const SumPlan = () => {
             {/* Precio CAEC */}
             <Box sx={{ width: '100%' }}>
               <Typography
-                variant="h6"
+                variant="body2"
                 sx={{
-                  fontWeight: 'bold',
-                  color: 'black',
-                  fontSize: { xs: '16px', sm: '18px', md: '20px' },
+                  color: '#666',
+                  fontSize: '1rem',
+                  mb: 0.5,
                 }}
               >
                 Precio CAEC
               </Typography>
-            </Box>
-
-            {/* Plus Sign */}
-            <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', my: 1 }}>
               <Typography
-                variant="h4"
+                variant="h6"
                 sx={{
                   fontWeight: 'bold',
-                  color: 'black',
-                  fontSize: { xs: '24px', sm: '28px', md: '32px' },
+                  color: '#333',
+                  fontSize: '1rem',
                 }}
               >
                 +
               </Typography>
             </Box>
 
-            {/* Precio Beneficio Adicional */}
+            {/* Precio Beneficios Adicionales */}
             <Box sx={{ width: '100%' }}>
               <Typography
-                variant="h6"
+                variant="body2"
                 sx={{
-                  fontWeight: 'bold',
-                  color: 'black',
-                  fontSize: { xs: '16px', sm: '18px', md: '20px' },
+                  color: '#666',
+                  fontSize: '1rem',
+                  mb: 0.5,
                 }}
               >
-                Precio Beneficio Adicional
+                Precio Beneficios Adicionales
               </Typography>
             </Box>
           </Box>
         </Grid>
 
-        {/* Middle Column - Arrow Symbol */}
-        <Grid item xs={12} md={2}>
+        {/* Middle Column - Arrow */}
+        <Grid item xs={12} md={2} sx={{ display: 'flex', justifyContent: 'center' }}>
           <Box
             sx={{
               display: 'flex',
-              justifyContent: 'center',
               alignItems: 'center',
-              height: '100%',
+              justifyContent: 'center',
+              width: 60,
+              height: 60,
+              backgroundColor: '#1976d2',
+              borderRadius: '50%',
+              color: 'white',
             }}
           >
-            <Box
-              sx={{
-                width: 80,
-                height: 80,
-                borderRadius: '50%',
-                border: '3px solid black',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: 'white',
-              }}
-            >
-              <ArrowIcon
-                sx={{
-                  fontSize: 40,
-                  color: 'black',
-                  fontWeight: 'bold',
-                }}
-              />
-            </Box>
+            <ArrowIcon sx={{ fontSize: 30 }} />
           </Box>
         </Grid>
 
-        {/* Right Column - Total Result */}
-        <Grid item xs={12} md={5}>
+        {/* Right Column - Total */}
+        <Grid item xs={12} md={4}>
           <Box
             sx={{
               display: 'flex',
-              justifyContent: 'center',
+              flexDirection: 'column',
               alignItems: 'center',
-              height: '100%',
-              minHeight: { xs: 'auto', md: '300px' },
+              textAlign: 'center',
             }}
           >
             <Typography
-              variant="h4"
+              variant="body2"
               sx={{
-                fontWeight: 'bold',
-                color: 'black',
-                textAlign: 'center',
-                fontSize: { xs: '20px', sm: '24px', md: '28px' },
-                lineHeight: 1.2,
+                color: '#666',
+                fontSize: '2rem',
+                mb: 1,
               }}
             >
               Total Cotización Pactada

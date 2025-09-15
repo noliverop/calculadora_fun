@@ -9,7 +9,9 @@ const Family = () => {
         maxWidth: '1186px',
         mx: 'auto',
         my: 4,
-        px: 3,
+        px: { xs: 2, sm: 3, md: 4 }, // Consistent horizontal padding
+        pr: { xs: 3, sm: 4, md: 6 }, // Enhanced right padding
+        overflowX: 'hidden', // Prevent horizontal overflow
       }}
     >
       <Grid container spacing={4} alignItems="center">
@@ -29,7 +31,12 @@ const Family = () => {
 
         {/* Right Column - Text */}
         <Grid item xs={12} md={8} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <Box sx={{ pr: { md: 4 } }}>
+          <Box sx={{ 
+            pr: { xs: 3, sm: 4, md: 6 }, // Match container right padding
+            pl: { xs: 1, sm: 2, md: 3 }, // Add left padding for balance
+            wordBreak: 'break-word', // Prevent text overflow
+            overflowWrap: 'break-word', // Additional text wrapping
+          }}>
             <Typography
               variant="body1"
               sx={{
@@ -37,6 +44,8 @@ const Family = () => {
                 textAlign: 'justify',
                 fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
                 lineHeight: 1.6,
+                wordBreak: 'break-word', // Prevent text overflow
+                overflowWrap: 'break-word', // Additional text wrapping
               }}
             >
               Mientras que el precio base del plan, el precio CAEC y el precio de beneficios adicionales no

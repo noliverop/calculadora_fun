@@ -9,4 +9,6 @@ export const ges2025monto = {
     'Banmédica': 0.7,
     'Consalud': 0.8,
     'Esencial': 0.9,
+    'Cruz del Norte': 0,
+    'Fundación': 0.3,
 }

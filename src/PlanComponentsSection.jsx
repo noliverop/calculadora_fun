@@ -57,7 +57,10 @@ const PlanComponentsSection = () => {
         maxWidth: '1186px',
         mx: 'auto',
         my: 4,
-        px: 3,
+        px: { xs: 2, sm: 3, md: 4 }, // Consistent horizontal padding
+        pr: { xs: 3, sm: 4, md: 6 }, // Enhanced right padding
+        overflowX: 'hidden',
+        overflowY: 'visible',
       }}
     >
       <Grid container spacing={3}>
@@ -67,8 +70,11 @@ const PlanComponentsSection = () => {
               elevation={0} 
               sx={{ 
                 p: 3, 
-                height: '100%',
+                height: 'auto',
+                minHeight: 'auto',
                 backgroundColor: 'white',
+                overflowY: 'visible',
+                mr: { xs: 1, sm: 2, md: 3 }, // Right margin for cards
               }}
             >
               <Typography 

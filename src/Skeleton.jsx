@@ -15,9 +15,11 @@ export default function Skeleton() {
         width: '100%',
         maxWidth: '1400px',
         mx: 'auto',
-        px: 2,
+        px: { xs: 2, sm: 3, md: 4 }, // Consistent horizontal padding
         minHeight: '100vh',
-        overflowY: 'auto',
+        height: 'auto', // Allow height to grow with content
+        overflowY: 'visible', // Changed from auto to visible
+        overflowX: 'hidden',
       }}
     >
       <Stack spacing={6} alignItems="center">

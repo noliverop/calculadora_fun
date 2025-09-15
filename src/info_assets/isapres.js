@@ -35,4 +35,12 @@ export const isapres = [
       value: 'Esencial',
       label: 'Esencial',
     },
+    {
+      value: 'Cruz del Norte',
+      label: 'Cruz del Norte',
+    },
+    {
+      value: 'Fundación',
+      label: 'Fundación',
+    },
   ];
