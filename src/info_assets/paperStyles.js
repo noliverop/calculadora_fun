@@ -3,10 +3,12 @@ import { styled } from '@mui/material/styles';
 
 export const BackPaper = styled(Paper)(({ theme }) => ({
     width: 120*6,
-    height: 120*18,
+    minHeight: 120*18, // Changed from fixed height to minHeight
+    height: 'auto', // Allow height to grow with content
     padding: theme.spacing(2),
     ...theme.typography.body2,
     textAlign: 'center',
+    overflowY: 'auto', // Allow scrolling if needed
   }));
 
 export const TitlePaper = styled(Paper)(({ theme }) => ({
@@ -38,11 +40,12 @@ export const BajadaPaper = styled(Paper)(({ theme }) => ({
 
 export const ResultsPaper = styled(Paper)(({ theme }) => ({
     width: 120*5,
-    height: 120*4.5,
+    minHeight: 120*4.5, // Changed from fixed height to minHeight
+    height: 'auto', // Allow height to grow with content
     padding: theme.spacing(2),
     ...theme.typography.a,
     textAlign: 'justify',
-    backgroundColor: '#e36906',
+    backgroundColor: theme.palette.warning.main, // Material-UI warning color (orange)
     margin: 'auto',
     display: 'flex', // Enable Flexbox
     color: 'hsl(0, 23%, 97%)',

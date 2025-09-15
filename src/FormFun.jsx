@@ -13,13 +13,17 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import { useState } from 'react';
 import { isapres } from './info_assets/isapres';
-import { ExplicacionPB, ExplicacionPCAEC, ExplicacionPBA, ExplicacionRIA } from './info_assets/explicaciones_componentes';
+import { ExplicacionPB, ExplicacionPCAEC, ExplicacionPBA } from './info_assets/explicaciones_componentes';
 import { factoresCotizante, factoresCarga } from './info_assets/factores_tabla';
 import { ges } from './info_assets/ges';
+import { ges2025monto } from './info_assets/ges2025monto';
 import { ResultsPaper } from './info_assets/paperStyles';
 import Grid from '@mui/material/Grid2';
 import { ItemGrid } from './info_assets/paperStyles';
 import Divider from '@mui/material/Divider';
+import Switch from '@mui/material/Switch';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import { icsa2025montos } from './info_assets/icsa2025montos';
 
 
 export default function FormFun() {
@@ -33,7 +37,6 @@ export default function FormFun() {
     precioBase: [isNumberNonNegative, "Campo debe ser un número mayor o igual a 0"],
     precioCaec: [isNumberNonNegative, "Campo debe ser un número mayor o igual a 0"],
     precioBA: [isNumberNonNegative, "Campo debe ser un número mayor o igual a 0"],
-    remImp: [isNumberNonNegative, "Campo debe ser un número mayor o igual a 0"],
     edadCot: [isNumberGreaterThan0, "Campo debe ser un número mayor a 0"],
     isapre: [isNonEmptyString, "Debe seleccionar una isapre"],
   };  
@@ -42,7 +45,6 @@ export default function FormFun() {
     precioBase,
     precioCaec,
     precioBA,
-    remImp,
     edadCot,
     isapre,
     onInputChange,
@@ -52,7 +54,6 @@ export default function FormFun() {
     precioBaseValid,
     precioCaecValid,
     precioBAValid,
-    remImpValid,
     edadCotValid,
     isapreValid,
     touchedFields,
@@ -61,7 +62,6 @@ export default function FormFun() {
       precioBase: "",
       precioCaec: "",
       precioBA: "",
-      remImp: "",
       edadCot: "",
       isapre: "",
     },
@@ -77,11 +77,13 @@ export default function FormFun() {
   const [PPComplementario, setPPComplementario] = useState(0)
   const [cotizacion, setCotizacion] = useState(0)
 
-  const [cotLessThanRem, setCotLessThanRem] = useState(false)
-
   const [numeroDeCargas, setNumeroDeCargas] = useState(0); // Track "Número de Cargas"
   const [edadCargas, setEdadCargas] = useState([]);
   const [sumFactoresCargas, setSumFactoresCargas] = useState(0);
+
+  // New state for toggles
+  const [icsa2025, setIcsa2025] = useState(false);
+  const [ges2025, setGes2025] = useState(false);
 
   //console.log(precioBaseValid)
   //console.log("isformvalid?")
@@ -124,10 +126,8 @@ export default function FormFun() {
   console.log(edadCargas)
   console.log("suma factores cargas")
   console.log(sumFactoresCargas)
-  console.log("cot imponible")
-  console.log((parseFloat(remImp)*0.07).toFixed(2))
-
-
+  console.log(edadCot)
+  console.log((edadCot ? parseFloat(factoresCotizante(edadCot)): 0))
 
   const onClickCalcular = (event) => {
     event.preventDefault();
@@ -147,20 +147,18 @@ export default function FormFun() {
       setSumFactoresCargas(sum_cargas)
 
       const newPPComplementario = parseFloat(
-        (parseFloat(precioBase) * ((edadCot ? parseFloat(factoresCotizante(edadCot)) : 0) + sum_cargas)).toFixed(2)
+        (parseFloat(icsa2025 ? (icsa2025montos[isapre]+1)*precioBase : precioBase) * ((edadCot ? parseFloat(factoresCotizante(edadCot)) : 0) + sum_cargas)).toFixed(2)
       );
       setPPComplementario(newPPComplementario); // Update PPComplementario state
     
-     
 
     const newCotizacion =
       newPPComplementario +
-      (isapre ? parseFloat(ges[isapre]) : 0) +
+      (isapre ? (ges2025 ? (isapre ? ges2025monto[isapre]: 0) : ges[isapre]) : 0) +
       parseFloat(precioCaec) +
       parseFloat(precioBA);
   
     setCotizacion(parseFloat(newCotizacion.toFixed(2)));
-    setCotLessThanRem(parseFloat(newCotizacion.toFixed(2)) < (parseFloat(remImp)*0.07).toFixed(2))
 
     
     handleShowResults()
@@ -173,32 +171,50 @@ export default function FormFun() {
     handleNotShowResults()
   }
 
+  // Common styles for form controls
+  const formControlStyles = {
+    width: '100%',
+  };
+
   return (
    <>
-  {/* Typography Section */}
-  <Typography variant="body2" gutterBottom color="#0064AC" align='justify'>
-    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos
-    blanditiis tenetur unde suscipit, quam beatae rerum inventore consectetur,
-    neque doloribus, cupiditate numquam dignissimos laborum fugiat deleniti? Eum
-    quasi quidem quibusdam.
-    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos
-    blanditiis tenetur unde suscipit, quam beatae rerum inventore consectetur,
-    neque doloribus, cupiditate numquam dignissimos laborum fugiat deleniti? Eum
-    quasi quidem quibusdam.
-  </Typography>
 
-  {/* Box Section */}
+  {/* Main Form Fields - 4 rows × 2 columns */}
   <Box
     sx={{
-        display: 'flex',
-        flexWrap: 'wrap', // Prevent wrapping
-        justifyContent: 'space-between', // Adjust spacing between items
-        alignItems: 'center', // Align items vertically in the center
-        gap: 2, // Optional: Adds consistent spacing between items
-        mt: 2, // Top margin
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: 2,
+        mt: 2,
+        mb: 2,
     }}
     >
-    <FormControl sx={{ m: 1}} variant="outlined">
+    {/* Row 1 - Toggles */}
+    <FormControlLabel
+      control={
+        <Switch
+          checked={icsa2025}
+          onChange={(e) => setIcsa2025(e.target.checked)}
+          disabled={disableForm}
+        />
+      }
+      label="ICSA 2025"
+      sx={{ justifyContent: 'center' }}
+    />
+    <FormControlLabel
+      control={
+        <Switch
+          checked={ges2025}
+          onChange={(e) => setGes2025(e.target.checked)}
+          disabled={disableForm}
+        />
+      }
+      label="GES 2025"
+      sx={{ justifyContent: 'center' }}
+    />
+
+    {/* Row 2 */}
+    <FormControl sx={formControlStyles} variant="outlined">
       <OutlinedInput
         id="outlined-adornment-weight"
         endAdornment={<InputAdornment position="end">UF</InputAdornment>}
@@ -229,7 +245,8 @@ export default function FormFun() {
         }
       </FormHelperText>
     </FormControl>
-    <FormControl sx={{ m: 1}} variant="outlined">
+
+    <FormControl sx={formControlStyles} variant="outlined">
       <OutlinedInput
         id="outlined-adornment-caec"
         endAdornment={<InputAdornment position="end">UF</InputAdornment>}
@@ -260,7 +277,9 @@ export default function FormFun() {
         }
       </FormHelperText>
     </FormControl>
-    <FormControl sx={{ m: 1}} variant="outlined">
+
+    {/* Row 3 */}
+    <FormControl sx={formControlStyles} variant="outlined">
       <OutlinedInput
         id="outlined-adornment-weight"
         endAdornment={<InputAdornment position="end">UF</InputAdornment>}
@@ -289,52 +308,18 @@ export default function FormFun() {
         {precioBAValid}
         </Box> : <div></div>
         }
-        
-      </FormHelperText>
-    </FormControl>
-    <FormControl sx={{ m: 1}} variant="outlined">
-      <OutlinedInput
-        id="outlined-adornment-weight"
-        endAdornment={<InputAdornment position="end">UF</InputAdornment>}
-        aria-describedby="outlined-weight-helper-text"
-        name='remImp'
-        type='number'
-        inputMode="numeric" 
-        value={ remImp }
-        onChange={ onInputChange }
-        disabled={disableForm}
-        onBlur={() => onFieldBlur("remImp")}
-        error={touchedFields.remImp && !!remImpValid}
-        inputProps={{
-          'aria-label': 'weight',
-        }}
-      />
-      <FormHelperText id="outlined-weight-helper-text">
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          Remuneración imponible aproximada
-          <Tooltip title={ExplicacionRIA}>
-            <InfoIcon />
-          </Tooltip>
-        </Box>
-        {touchedFields.remImp && !!remImpValid ?
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-        {remImpValid}
-        </Box> : <div></div>
-        }
       </FormHelperText>
     </FormControl>
 
-    <FormControl sx={{ m: 1, minWidth: 0.42}} variant="outlined">
+    <FormControl sx={formControlStyles} variant="outlined">
       <OutlinedInput
         id="outlined-adornment-weight"
-        endAdornment={<InputAdornment position="end"></InputAdornment>}
         aria-describedby="outlined-weight-helper-text"
-        type='number'
-        inputMode="numeric" 
-        name='edadCot'
-        value={ edadCot }
-        onChange={ onInputChange }
+        defaultValue={0}
         disabled={disableForm}
+        name='edadCot'
+        value={edadCot}
+        onChange={onInputChange}
         onBlur={() => onFieldBlur("edadCot")}
         error={touchedFields.edadCot && !!edadCotValid}
         inputProps={{
@@ -348,48 +333,40 @@ export default function FormFun() {
         {edadCotValid}
         </Box> : <div></div>
         }
-        </FormHelperText>
+      </FormHelperText>
     </FormControl>
-    <FormControl sx={{ m: 1, minWidth: 0.42}} variant="outlined">  
-    <TextField sx={{ m: 1, minWidth: 0.426}}
-          id="outlined-select-currency"
-          select
-          type='text'
-          label="Isapre"
-          defaultValue=""
-          name='isapre'
-          value={ isapre }
-          onChange={ onInputChange }
-          disabled={disableForm}
-          onBlur={() => onFieldBlur("isapre")}
-          error={touchedFields.isapre && !!isapreValid}
-        >
-          {isapres.map((option) => (
-            <MenuItem key={option.value} value={option.value}>
-              {option.label}
-            </MenuItem>
-          ))}
-        </TextField>
-        <FormHelperText id="outlined-weight-helper-text">
+
+    {/* Row 4 */}
+    <FormControl sx={formControlStyles} variant="outlined">  
+      <TextField
+        id="outlined-select-currency"
+        select
+        type='text'
+        label="Isapre"
+        defaultValue=""
+        name='isapre'
+        value={ isapre }
+        onChange={ onInputChange }
+        disabled={disableForm}
+        onBlur={() => onFieldBlur("isapre")}
+        error={touchedFields.isapre && !!isapreValid}
+      >
+        {isapres.map((option) => (
+          <MenuItem key={option.value} value={option.value}>
+            {option.label}
+          </MenuItem>
+        ))}
+      </TextField>
+      <FormHelperText id="outlined-weight-helper-text">
         {touchedFields.isapre && !!isapreValid ?
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
         {isapreValid}
         </Box> : <div></div>
         }
-        </FormHelperText>
-      </FormControl>  
-  </Box>
-  <Box
-    sx={{
-        display: 'flex',
-        flexWrap: 'wrap', // Prevent wrapping
-        justifyContent: 'space-between', // Adjust spacing between items
-        alignItems: 'center', // Align items vertically in the center
-        gap: 2, // Optional: Adds consistent spacing between items
-        mt: 2, // Top margin
-    }}
-    >
-    <FormControl sx={{ m: 1}} variant="outlined">
+      </FormHelperText>
+    </FormControl>
+
+    <FormControl sx={formControlStyles} variant="outlined">
       <OutlinedInput
         id="outlined-adornment-weight"
         aria-describedby="outlined-weight-helper-text"
@@ -401,47 +378,57 @@ export default function FormFun() {
       <FormHelperText id="outlined-weight-helper-text">Número de Cargas</FormHelperText>
     </FormControl>
   </Box>
-  <Box
-    sx={{
-        display: 'flex',
-        flexWrap: 'wrap', // Prevent wrapping
-        justifyContent: 'space-between', // Adjust spacing between items
-        alignItems: 'center', // Align items vertically in the center
-        gap: 2, // Optional: Adds consistent spacing between items
-        mt: 2, // Top margin
-    }}
-   > 
-    {Array.from({ length: numeroDeCargas }).map((_, index) => (   
-    <FormControl sx={{ m: 1, minWidth: 0.42}} variant="outlined" key={`edadCarga-${index}`}>
-      <OutlinedInput
-        id={`outlined-adornment-weight-edadCarga-${index}`}
-        key={`edadCarga-${index}`}
-        endAdornment={<InputAdornment position="end"></InputAdornment>}
-        aria-describedby="outlined-weight-helper-text"
-        type='number'
-        inputMode="numeric" 
-        name={`edadCarga-${index}`}
-        value={edadCargas[index] || ''}
-        onChange={(e) => handleEdadCargaChange(index, e.target.value)}
-        disabled={disableForm}
-        //onBlur={() => onFieldBlur("edadCot")}
-        //error={touchedFields.edadCot && !!edadCotValid}
-        inputProps={{
-          'aria-label': 'weight',
-        }}
-      />
-      <FormHelperText id={`outlined-weight-helper-text-edadCarga-${index}`}>
-        Edad Cotizante {index + 1}
-        </FormHelperText>
-    </FormControl>
-    ))}
-  </Box>  
-  <Stack direction="row" spacing={2}>
-      <Button variant="contained" disabled={!isFormValid || disableForm} onClick={onClickCalcular}>Calcular</Button>
+
+  {/* Dependent Age Fields */}
+  {numeroDeCargas > 0 && (
+    <Box
+      sx={{
+          display: 'grid',
+          gridTemplateColumns: {
+            xs: '1fr',
+            sm: 'repeat(2, 1fr)',
+            md: 'repeat(auto-fit, minmax(200px, 1fr))',
+          },
+          gap: 2,
+          mt: 2,
+          mb: 2,
+      }}
+     > 
+      {Array.from({ length: numeroDeCargas }).map((_, index) => (   
+        <FormControl sx={formControlStyles} variant="outlined" key={`edadCarga-${index}`}>
+          <OutlinedInput
+            id={`outlined-adornment-weight-edadCarga-${index}`}
+            endAdornment={<InputAdornment position="end"></InputAdornment>}
+            aria-describedby="outlined-weight-helper-text"
+            type='number'
+            inputMode="numeric" 
+            name={`edadCarga-${index}`}
+            value={edadCargas[index] || ''}
+            onChange={(e) => handleEdadCargaChange(index, e.target.value)}
+            disabled={disableForm}
+            inputProps={{
+              'aria-label': 'weight',
+            }}
+          />
+          <FormHelperText id={`outlined-weight-helper-text-edadCarga-${index}`}>
+            Edad Cotizante {index + 1}
+          </FormHelperText>
+        </FormControl>
+      ))}
+    </Box>
+  )}
+
+  {/* Action Buttons */}
+  <Box sx={{ mt: 3, mb: 2 }}>
+    <Stack direction="row" spacing={2}>
+      <Button variant="contained" disabled={!isFormValid || disableForm} onClick={onClickCalcular}>
+        Calcular
+      </Button>
       <Button variant="contained" disabled={!disableForm} onClick={onClickReset}>
         Resetear
       </Button>
-  </Stack>  
+    </Stack>
+  </Box>
 
   {showResults ?   
   <ResultsPaper variant="elevation">
@@ -452,7 +439,7 @@ export default function FormFun() {
             <Typography variant="caption" gutterBottom>
                 Precio Base
               </Typography>
-              <ItemGrid>{precioBase}</ItemGrid>
+              <ItemGrid>{parseFloat(icsa2025 ? (icsa2025montos[isapre]+1)*precioBase : precioBase).toFixed(2)}</ItemGrid>
             </Box>
           </Grid>
           <Grid size={1}>
@@ -478,7 +465,7 @@ export default function FormFun() {
           <Grid size={4}>
           <Box sx={{ display: 'flex', flexDirection: 'column', }}>
                   <Box sx={{ height: 24 /* Adjust this to match the label height */ }} />
-                  <ItemGrid>{PPComplementario}</ItemGrid>
+                  <ItemGrid>{PPComplementario.toFixed(2)}</ItemGrid>
               </Box>
           </Grid>
           <Grid size={7}>
@@ -488,7 +475,7 @@ export default function FormFun() {
             <ItemGrid>=</ItemGrid>
           </Grid>
           <Grid size={4}>
-            <ItemGrid>{isapre ? ges[isapre]: 0}</ItemGrid>
+            <ItemGrid>{(ges2025 ? (isapre ? ges2025monto[isapre]: 0) * (1 + numeroDeCargas) : (isapre ? ges[isapre]: 0) * (1 + numeroDeCargas)).toFixed(2)}</ItemGrid>
           </Grid>
           <Grid size={7}>
             <ItemGrid>Precio CAEC</ItemGrid>
@@ -497,7 +484,7 @@ export default function FormFun() {
             <ItemGrid>=</ItemGrid>
           </Grid>
           <Grid size={4}>
-            <ItemGrid>{precioCaec}</ItemGrid>
+            <ItemGrid>{parseFloat(precioCaec).toFixed(2)}</ItemGrid>
           </Grid>
           <Grid size={7}>
             <ItemGrid>Precio Beneficios Adicionales</ItemGrid>
@@ -506,7 +493,7 @@ export default function FormFun() {
             <ItemGrid>=</ItemGrid>
           </Grid>
           <Grid size={4}>
-            <ItemGrid>{precioBA}</ItemGrid>
+            <ItemGrid>{parseFloat(precioBA).toFixed(2)}</ItemGrid>
           </Grid>
           <Grid size={12}>
               <Divider sx={{ borderWidth: 2, borderColor: 'black' }} />
@@ -518,37 +505,125 @@ export default function FormFun() {
             <ItemGrid>=</ItemGrid>
           </Grid>
           <Grid size={4}>
-            <ItemGrid>{cotizacion}</ItemGrid>
+            <ItemGrid>{cotizacion.toFixed(2)}</ItemGrid>
           </Grid>
         </Grid>
-        {cotLessThanRem ? 
         <Typography
         variant="body1" gutterBottom color="#0064AC" align='justify'
         sx={{ marginTop: 3, color: 'black' }}
         >
-        La cotización estimada a pagar, dados los antecedentes provistos es de {cotizacion} UF pero debido
-        a que tu cotización imponible aproximada es mayor, tu cotización a pagar
-        será tu cotización imponible de {(parseFloat(remImp)*0.07).toFixed(2)} UF. 
-        </Typography> :
-        <Typography
-        variant="body1" gutterBottom color="#0064AC" align='justify'
-        sx={{ marginTop: 3, color: 'black' }}
-        >
-        La cotización estimada a pagar dados los antecedentes provistos es de {cotizacion} UF. 
-        </Typography> 
-
-        }
+        La cotización estimada a pagar dados los antecedentes provistos es de {cotizacion.toFixed(2)} UF. 
+        </Typography>
         <Typography
           variant="body1" gutterBottom color="#0064AC" align='justify'
           sx={{ marginTop: 3, color: 'black' }}
         >
-        <ui>
-          <li>Tu precio base de {} significa a ...</li>
-          <li>Tu factor de riesgo de {} está asociado a ...</li>
-          <li>Tu precio GES de {} está asociado a ...</li>
-          <li>Tu precio CAEC de {} está asociado a ...</li>
-          <li>Tu precio de beneficios adicionales de {} está asociado a ...</li>
-        </ui>
+        <Box component="ul" sx={{ 
+          pl: 3, 
+          m: 0,
+          '& li': {
+            mb: 1,
+            fontSize: '1rem',
+            lineHeight: 1.6,
+          }
+        }}>
+          <li>{icsa2025 ? `Tu precio base del plan aplicando ICSA 2025 es de ${parseFloat(precioBase*(1+icsa2025montos[isapre])).toFixed(2)} UF.` : `Tu precio base del plan sin aplicar ICSA 2025 es de ${parseFloat(precioBase).toFixed(2)} UF.`}</li>
+          <li>Tu factor de riesgo familiar de {((edadCot ? parseFloat(factoresCotizante(edadCot)): 0) + sumFactoresCargas).toFixed(2)} está asociado a la edad del cotizante y sus cargas familiares. Estos factores los puedes ver en las siguientes tablas:
+            <Box sx={{ mt: 2, display: 'flex', gap: 3, flexWrap: 'wrap', justifyContent: 'center' }}>
+              {/* Cotizante Factors Table */}
+              <Box sx={{ minWidth: 200 }}>
+                <Typography variant="h6" sx={{ mb: 2, textAlign: 'center', fontWeight: 'bold' }}>
+                  Factores Cotizante
+                </Typography>
+                <Box sx={{ 
+                  border: '1px solid #ccc', 
+                  borderRadius: 1,
+                  overflow: 'hidden'
+                }}>
+                  <Box sx={{ 
+                    display: 'grid', 
+                    gridTemplateColumns: '1fr 1fr',
+                    '& > div': {
+                      p: 1,
+                      borderBottom: '1px solid #ccc',
+                      borderRight: '1px solid #ccc',
+                      fontSize: '0.875rem',
+                      backgroundColor: '#fff',
+                      fontWeight: 'bold'
+                    }
+                  }}>
+                    <Box>Edad</Box>
+                    <Box>Factor</Box>
+                    <Box>&lt; 20</Box>
+                    <Box>0.6</Box>
+                    <Box>20-24</Box>
+                    <Box>0.9</Box>
+                    <Box>25-34</Box>
+                    <Box>1.0</Box>
+                    <Box>35-44</Box>
+                    <Box>1.3</Box>
+                    <Box>45-54</Box>
+                    <Box>1.4</Box>
+                    <Box>55-64</Box>
+                    <Box>2.0</Box>
+                    <Box>65+</Box>
+                    <Box>2.4</Box>
+                  </Box>
+                </Box>
+              </Box>
+
+              {/* Carga Factors Table */}
+              <Box sx={{ minWidth: 200 }}>
+                <Typography variant="h6" sx={{ mb: 2, textAlign: 'center', fontWeight: 'bold' }}>
+                  Factores Carga
+                </Typography>
+                <Box sx={{ 
+                  border: '1px solid #ccc', 
+                  borderRadius: 1,
+                  overflow: 'hidden'
+                }}>
+                  <Box sx={{ 
+                    display: 'grid', 
+                    gridTemplateColumns: '1fr 1fr',
+                    '& > div': {
+                      p: 1,
+                      borderBottom: '1px solid #ccc',
+                      borderRight: '1px solid #ccc',
+                      fontSize: '0.875rem',
+                      backgroundColor: '#fff',
+                      fontWeight: 'bold'
+                    }
+                  }}>
+                    <Box>Edad</Box>
+                    <Box>Factor</Box>
+                    <Box>&lt; 2</Box>
+                    <Box>0.0</Box>
+                    <Box>2-19</Box>
+                    <Box>0.6</Box>
+                    <Box>20-24</Box>
+                    <Box>0.7</Box>
+                    <Box>25-34</Box>
+                    <Box>0.7</Box>
+                    <Box>35-44</Box>
+                    <Box>0.9</Box>
+                    <Box>45-54</Box>
+                    <Box>1.0</Box>
+                    <Box>55-64</Box>
+                    <Box>1.4</Box>
+                    <Box>65+</Box>
+                    <Box>2.2</Box>
+                  </Box>
+                </Box>
+              </Box>
+            </Box>
+          </li>
+          <li>{ges2025 ? 
+  `El precio GES 2025 de la isapre ${isapre} corresponde a ${isapre ? ges2025monto[isapre]: 0} UF. Este valor debe multiplicarse por la cantidad de beneficiarios del plan, en este caso, ${1 + numeroDeCargas} ${numeroDeCargas === 0 ? 'beneficiario' : 'beneficiarios'}. Por lo tanto el precio GES para este plan es: ${((isapre ? ges2025monto[isapre]: 0) * (1 + numeroDeCargas)).toFixed(2)}` : 
+  `El precio GES de la isapre ${isapre} corresponde a ${isapre ? ges[isapre]: 0} UF. Este valor debe multiplicarse por la cantidad de beneficiarios del plan, en este caso, ${1 + numeroDeCargas} ${numeroDeCargas === 0 ? 'beneficiario' : 'beneficiarios'}. Por lo tanto el precio GES para este plan es: ${((isapre ? ges[isapre]: 0) * (1 + numeroDeCargas)).toFixed(2)}`
+}</li>
+          <li>Tu precio CAEC de {parseFloat(precioCaec).toFixed(2)} UF está asociado a la Cobertura Adicional para Enfermedades Catastróficas.</li>
+          <li>Tu precio de beneficios adicionales de {parseFloat(precioBA).toFixed(2)} UF está asociado a los beneficios extra contratados.</li>
+        </Box>
         </Typography>
       </Box>
   </ResultsPaper>
