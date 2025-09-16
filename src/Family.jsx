@@ -50,7 +50,7 @@ const Family = () => {
             >
               Mientras que el precio base del plan, el precio CAEC y el precio de beneficios adicionales no
               dependen de la cantidad de beneficiarios dentro del plan, los valores de factor del grupo familiar y el
-              precio GES sí dependerán de la cantidad de beneficiarios y sus edades.
+              precio GES sí dependerán de la cantidad de beneficiarios y/o sus edades.
             </Typography>
           </Box>
         </Grid>
