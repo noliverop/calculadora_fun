@@ -658,7 +658,7 @@ export default function FormFun() {
     <>El precio GES 2025 de la isapre {isapre} corresponde a {isapre ? ges2025monto[isapre]: 0} UF. Este valor debe multiplicarse por la cantidad de beneficiarios del plan, en este caso, {1 + numeroDeCargas} {numeroDeCargas === 0 ? 'beneficiario' : 'beneficiarios'}. Por lo tanto el precio GES para este plan es: <b>{((isapre ? ges2025monto[isapre]: 0) * (1 + numeroDeCargas)).toFixed(2)} UF.</b></> : 
     <>El precio GES de la isapre {isapre} corresponde a {isapre ? ges[isapre]: 0} UF. Este valor debe multiplicarse por la cantidad de beneficiarios del plan, en este caso, {1 + numeroDeCargas} {numeroDeCargas === 0 ? 'beneficiario' : 'beneficiarios'}. Por lo tanto el precio GES para este plan es: <b>{((isapre ? ges[isapre]: 0) * (1 + numeroDeCargas)).toFixed(2)} UF.</b></>
   }</li>
-            <li>Tu precio CAEC de <b>{parseFloat(precioCaec).toFixed(2)}</b> UF está asociado a la Cobertura Adicional para Enfermedades Catastróficas.</li>
+            <li>Tu precio CAEC de <b>{parseFloat(precioCaec).toFixed(2)}</b> UF está asociado a la Cobertura Adicional para Enfermedades Catastróficas. <b>Nota:</b> Es normal que este precio sea 0 en muchos planes ya que esta cobertura ha ido gradualmente incorporándose al precio base del plan.</li>
             <li>Tu precio de beneficios adicionales corresponde a  <b>{parseFloat(precioBA).toFixed(2)}</b> UF.</li>
             <li><b>Recordar que desde la implementación de la ley 21.674 los cotizantes de isapres no pueden tener un plan con un valor menor a su tope de 7% legal.</b></li>
           </Box>
