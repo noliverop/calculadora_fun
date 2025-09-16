@@ -39,8 +39,4 @@ export const isapres = [
       value: 'Cruz del Norte',
       label: 'Cruz del Norte',
     },
-    {
-      value: 'Fundación',
-      label: 'Fundación',
-    },
   ];
